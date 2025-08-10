@@ -1,11 +1,6 @@
-import os
-
-from dotenv import find_dotenv, load_dotenv
 from llama_index.core import StorageContext, VectorStoreIndex
-from llama_index.core.base.embeddings.base import BaseEmbedding
 from llama_index.core.schema import Node
 from llama_index.core.vector_stores.types import BasePydanticVectorStore
-from llama_index.embeddings.ollama import OllamaEmbedding
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
@@ -15,13 +10,13 @@ from src.embedding.embedded_model import embedded_model
 class Indexer:
     def __init__(
         self,
-        embed_model: BaseEmbedding = None,
         vector_store: BasePydanticVectorStore = None,
-        db_config: dict = None,
-        ollama_url: str = None,
+        indexer_config: dict = None,
     ):
-        self.embed_model = embedded_model(ollama_url)
-        self.vector_store = vector_store or self.load_qdrant(db_config)
+        self.embed_model = embedded_model()
+        self.qdrant_client = QdrantClient(indexer_config["vector_db"])
+        self.collection_name = indexer_config["collection_name"]
+        self.vector_store = vector_store or self.load_qdrant()
         self.index = self.load_index_from_vector_store(
             self.vector_store, self.embed_model
         )
@@ -29,13 +24,21 @@ class Indexer:
     def get_index(self):
         return self.index
 
-    def load_qdrant(self, db_config):
-
-        client = QdrantClient(db_config["database"])
+    def load_qdrant(self):
         vector_store = QdrantVectorStore(
-            client=client, collection_name=db_config["collection_name"]
+            client=self.qdrant_client,
+            collection_name=self.collection_name,
         )
         return vector_store
+
+    def check_collection_exists(self, **kwargs):
+        collection_name = kwargs.get("collection_name", self.collection_name)
+        result = self.qdrant_client.collection_exists(collection_name=collection_name)
+        if result:
+            print(f"collection: {collection_name} is already exists")
+        else:
+            print(f"collection: {collection_name} is not exists")
+        return result
 
     def load_index_from_vector_store(self, vector_store, embed_model):
         """
@@ -59,25 +62,5 @@ class Indexer:
     def remove_nodes_from_index(self, node_ids, **kwargs):
         self.index.delete_nodes(node_ids, **kwargs)
 
-    def retrive(self, query: str, top_k=5):
+    def retrieve(self, query: str, top_k=5):
         return self.index.as_retriever(similarity_top_k=top_k).retrieve(query)
-
-    def _get_default_embed_model(self, base_url=None):
-        base_url = base_url or os.getenv("ollama_api", "http://localhost:11434")
-        embed_model = OllamaEmbedding(model_name="bge-m3", base_url=base_url)
-        return embed_model
-
-
-if __name__ == "__main__":
-    load_dotenv(find_dotenv())
-
-    config = {
-        "database": os.getenv("qdrant_url", "http://localhost:6333"),
-        "collection_name": "test",
-    }
-    indexer = Indexer(db_config=config, ollama_url=os.getenv("ollama_api"))
-    nodes = indexer.retrive("How to open a bank account?")
-    for node in nodes:
-        print("Node ID:", node.node_id)
-        print("Node Text:", node.text[:100] + "...")
-        print("=====================================")
