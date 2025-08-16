@@ -13,6 +13,11 @@ class AppConfig:
         self.vector_db_url = os.getenv("QDRANT_URL", "http://localhost:6333")
         self.collection = os.getenv("COLLECTION_NAME")
         self.embedded_model = os.getenv("EMBEDDED_MODEL")
+        self.postgres_host = os.getenv("POSTGRES_HOST")
+        self.postgres_port = os.getenv("POSTGRES_port")
+        self.postgres_db = os.getenv("POSTGRES_DB")
+        self.postgres_user = os.getenv("POSTGRES_USER")
+        self.postgres_pass = os.getenv("POSTGRES_PASSWORD")
 
     def indexer_config(self):
         config = {
@@ -27,3 +32,18 @@ class AppConfig:
             "ollama_api": self.ollama_url,
         }
         return config
+
+    def postgres_config(self):
+        config = {
+            "host": self.postgres_host,
+            "port": self.postgres_port,
+            "user": self.postgres_user,
+            "pass": self.postgres_pass,
+            "db": self.postgres_db,
+        }
+        return config
+
+
+def load_config():
+    config = AppConfig()
+    return config
