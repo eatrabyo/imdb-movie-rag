@@ -4,7 +4,7 @@ from llama_index.core.vector_stores.types import BasePydanticVectorStore
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
-from src.embedding.embedded_model import embedded_model
+from src.core.embedded_model import embedded_model
 
 
 class Indexer:

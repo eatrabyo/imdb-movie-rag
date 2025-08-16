@@ -1,5 +1,3 @@
-import os
-
 from llama_index.embeddings.ollama import OllamaEmbedding
 
 from src.config.load_config import AppConfig
