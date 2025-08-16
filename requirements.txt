@@ -2,7 +2,11 @@
 qdrant-client == 1.14.2
 fastapi == 0.115.12
 uvicorn == 0.34.3
-llama-index-llms-ollama==0.5.2
-llama-index-embeddings-ollama==0.6.0
-llama-index==0.12.42
-llama-index-vector-stores-qdrant==0.6.1
+llama-index-llms-ollama == 0.5.2
+llama-index-embeddings-ollama == 0.6.0
+llama-index == 0.12.42
+llama-index-vector-stores-qdrant == 0.6.1
+llama-index-storage-chat-store-postgres == 0.3.0
+psycopg == 3.2.9
+python-dotenv == 1.1.0
+sqlalchemy == 2.0.41
