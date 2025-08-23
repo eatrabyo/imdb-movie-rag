@@ -3,15 +3,15 @@ from llama_index.storage.chat_store.postgres import PostgresChatStore
 
 from src.config.load_config import load_config
 
-config = load_config()
+config = load_config().postgres_config()
 
 
 def chat_mem(user_id):
     chat_store = PostgresChatStore.from_params(
-        host=config["pg_vector_host"],
-        port=config["pg_vector_port"],
-        user=config["pg_vector_user"],
-        password=config["pg_vector_pass"],
+        host=config["host"],
+        port=config["port"],
+        user=config["user"],
+        password=config["pass"],
         database=config["db"],
         table_name="chat_history",
     )
