@@ -5,6 +5,7 @@ from llama_index.vector_stores.qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 
 from src.core.embedded_model import embedded_model
+from src.pipeline.preprocessed_doc import Process_doc
 
 
 class Indexer:
@@ -20,8 +21,14 @@ class Indexer:
         self.index = self.load_index_from_vector_store(
             self.vector_store, self.embed_model
         )
+        self.pipe = Process_doc(indexer_config["file_path"])
 
     def get_index(self):
+        result = self.check_collection_exists()
+        if not result:
+            print("Begin Insert data")
+            nodes = self.pipe.run()
+            self.add_nodes_to_index(nodes)
         return self.index
 
     def load_qdrant(self):
