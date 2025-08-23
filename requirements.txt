@@ -10,3 +10,4 @@ llama-index-storage-chat-store-postgres == 0.3.0
 psycopg == 3.2.9
 python-dotenv == 1.1.0
 sqlalchemy == 2.0.41
+psycopg-binary==3.2.9
