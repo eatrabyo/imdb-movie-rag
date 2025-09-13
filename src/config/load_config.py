@@ -2,8 +2,6 @@ import os
 
 from dotenv import find_dotenv, load_dotenv
 
-from src.config.chat_engine_config import ChatEngineConfig
-
 load_dotenv(find_dotenv())
 
 
