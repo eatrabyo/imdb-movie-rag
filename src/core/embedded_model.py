@@ -1,11 +1,12 @@
+import json
+import logging
+
+import requests
 from llama_index.embeddings.ollama import OllamaEmbedding
 
-from src.config.load_config import AppConfig
-import requests
-import logging
-import json
+from src.config.load_config import AppConfig, load_config
 
-config = AppConfig()
+config = load_config()
 logger = logging.getLogger(__name__)
 
 
